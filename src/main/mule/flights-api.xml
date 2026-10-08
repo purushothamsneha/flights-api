@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="3c578907-a34e-43b4-bca5-fdc1572e4a54" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="208029bb-bd7e-428a-82a7-23bf3e4c810e" >
+		<http:request-connection host="training4-american-ws.cloudhub.io" port="80" />
+	</http:request-config>
+	<flow name="flights-apiFlow" doc:id="21507e50-f7d8-40ca-a267-1e26339b7028" >
+		<http:listener doc:name="Listener" doc:id="c5d89629-2f9d-4547-a777-a924527017fb" config-ref="HTTP_Listener_config" path="/ticket"/>
+		<logger level="INFO" doc:name="flights request" doc:id="36381a65-17ff-42f8-bc5c-9f7500fb014d" message="flow started"/>
+		<http:request method="GET" doc:name="Request" doc:id="2c22c20a-2c66-4b01-aa51-7cc7d8586efa" config-ref="HTTP_Request_configuration" path="/api/flights">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	origin : attributes.queryParams.origin,
+	destination : attributes.queryParams.destination
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="flights end Logger" doc:id="c872b76a-ca4a-4a95-ba02-c517c73661f8" message="flow ended"/>
+	</flow>
+</mule>
